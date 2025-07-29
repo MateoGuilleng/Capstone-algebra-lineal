@@ -40,12 +40,8 @@ export default function RootLayout({ children }) {
               </div>
             </section>
           </main>
-          {/* Footer */}
-          <footer className="w-full bg-white/5 border-t border-white/10 py-4 mt-8">
-            <div className="max-w-4xl mx-auto text-center text-gray-300 text-xs tracking-wide">
-              © {new Date().getFullYear()} Capstone Álgebra Lineal &mdash; Hecho con ❤️ para aprender
-            </div>
-          </footer>
+
+          
         </div>
       </body>
     </html>
