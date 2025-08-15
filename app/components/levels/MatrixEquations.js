@@ -35,16 +35,16 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
         consistent: true,
         hasUniqueSolution: true,
         homogeneous: false,
-        symmetric: false
+        symmetric: true
       }
     },
     {
       title: "Sistema con Fracciones",
-      description: "Maneja coeficientes fraccionarios",
+      description: "Resuelve el sistema. La eliminación gaussiana/Gauss-Jordan puede introducir coeficientes fraccionarios.",
       coefficients: [[1, 2], [3, 1]],
       constants: [4, 5],
       solution: [1, 1.5],
-      hint: "Multiplica la primera ecuación por 3 y resta de la segunda",
+      hint: "Usa eliminación Gauss-Jordan: haz la primera columna cero debajo del pivote, luego la segunda.",
       properties: {
         linearlyIndependent: true,
         consistent: true,
@@ -186,13 +186,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
   const solveSystemWithData = (coeffs, consts) => {
     const n = coeffs.length;
     
-    // Verificar si es un sistema homogéneo
-    const isHomogeneous = consts.every(c => Math.abs(c) < 1e-10);
-    
-    // Para sistemas homogéneos, siempre devolver la solución trivial
-    if (isHomogeneous) {
-      return new Array(n).fill(0);
-    }
+    // Remove special handling for homogeneous systems - let Gaussian elimination handle it
     
     const augmented = coeffs.map((row, i) => [...row, consts[i]]);
     
@@ -213,16 +207,10 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
       if (Math.abs(augmented[i][i]) < 1e-10) {
         // Verificar si el sistema es inconsistente
         if (Math.abs(augmented[i][n]) > 1e-10) {
-          throw new Error('Sistema inconsistente');
+          throw new Error('Sistema inconsistente'); // No solution
         } else {
-          // Sistema con infinitas soluciones, intentar encontrar una solución particular
-          const result = new Array(n).fill(0);
-          for (let j = 0; j < n; j++) {
-            if (Math.abs(augmented[j][j]) > 1e-10) {
-              result[j] = augmented[j][n] / augmented[j][j];
-            }
-          }
-          return result;
+          // Sistema con infinitas soluciones
+          return 'INFINITE_SOLUTIONS'; // Indicate infinite solutions
         }
       }
       
@@ -254,18 +242,38 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
 
   const checkAnswer = () => {
     // Verificar si el usuario escribió "Sin solución" para sistemas inconsistentes
-    if (userSolution.every(val => val === 'Sin solución' || val === 'sin solución')) {
-      if (!calculatedSolution) {
+    if (userSolution.every(val => val.toLowerCase().includes('sin solución'))) {
+      if (calculatedSolution === null) {
         setIsCorrect(true);
         setFeedback('¡Correcto! Este sistema no tiene solución porque las ecuaciones son contradictorias.');
         setTimeout(() => {
           onStepComplete(100);
         }, 2000);
         return;
+      } else {
+        setIsCorrect(false);
+        setFeedback('Incorrecto. Este sistema SÍ tiene solución.');
+        return;
+      }
+    }
+
+    // Verificar si el usuario escribió "Infinitas soluciones" para sistemas con infinitas soluciones
+    if (userSolution.every(val => val.toLowerCase().includes('infinitas soluciones'))) {
+      if (calculatedSolution === 'INFINITE_SOLUTIONS') {
+        setIsCorrect(true);
+        setFeedback('¡Correcto! Este sistema tiene infinitas soluciones.');
+        setTimeout(() => {
+          onStepComplete(100);
+        }, 2000);
+        return;
+      } else {
+        setIsCorrect(false);
+        setFeedback('Incorrecto. Este sistema no tiene infinitas soluciones.');
+        return;
       }
     }
     
-    if (!calculatedSolution) {
+    if (calculatedSolution === null) {
       // Sistema sin solución
       setIsCorrect(true);
       setFeedback('¡Correcto! Este sistema no tiene solución porque las ecuaciones son contradictorias.');
@@ -345,8 +353,13 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
   const autoSolve = () => {
     try {
       const result = solveSystem();
-      setUserSolution(result.map(x => x.toFixed(2)));
-      setFeedback('Sistema resuelto automáticamente usando eliminación gaussiana.');
+      if (result === 'INFINITE_SOLUTIONS') {
+        setUserSolution(Array(coefficients.length).fill('Infinitas soluciones'));
+        setFeedback('Este sistema tiene infinitas soluciones.');
+      } else {
+        setUserSolution(result.map(x => x.toFixed(2)));
+        setFeedback('Sistema resuelto automáticamente usando eliminación gaussiana.');
+      }
     } catch (error) {
       if (error.message === 'Sistema inconsistente') {
         setFeedback('Este sistema no tiene solución (sistema inconsistente).');
@@ -408,7 +421,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
                   setUserSolution(newSolution);
                 }}
                 className="custom-input w-32 text-lg"
-                placeholder="0"
+                placeholder={currentStep.solution === 'INFINITE_SOLUTIONS' ? 'Infinitas soluciones' : (currentStep.solution === null ? 'Sin solución' : '0')}
               />
             </div>
           ))}
