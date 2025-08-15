@@ -105,16 +105,4 @@ algebra/
   # ... otros archivos de configuración
 ```
 
-## Contribución
 
-Las contribuciones son bienvenidas. Si deseas mejorar el proyecto, por favor sigue estos pasos:
-
-1.  Haz un fork del repositorio.
-2.  Crea una nueva rama (`git checkout -b feature/nueva-feature`).
-3.  Realiza tus cambios y commitea (`git commit -m 'feat: añadir nueva característica'`).
-4.  Empuja tus cambios a la rama (`git push origin feature/nueva-feature`).
-5.  Abre un Pull Request.
-
-## Licencia
-
-Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` para más detalles.
