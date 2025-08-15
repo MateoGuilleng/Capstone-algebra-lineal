@@ -5,19 +5,19 @@ import { motion } from 'framer-motion';
 import { Stage, Layer, Line, Circle, Group } from 'react-konva';
 
 export default function BasicTransformations({ step, onStepComplete, onLevelComplete, onTotalStepsChange, level }) {
-  const [shape, setShape] = useState({ x: 200, y: 200, rotation: 0, scale: 1 });
-  const [target, setTarget] = useState({ x: 400, y: 200, rotation: 0, scale: 1 });
+  const [shape, setShape] = useState({ x: 200, y: 200, rotation: 0, scaleX: 1, scaleY: 1 }); // Changed scale to scaleX and scaleY
+  const [target, setTarget] = useState({ x: 400, y: 200, rotation: 0, scaleX: 1, scaleY: 1 }); // Changed scale to scaleX and scaleY
   const [isCorrect, setIsCorrect] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [showHint, setShowHint] = useState(false);
-  const [currentLevelScore, setCurrentLevelScore] = useState(0); // New state to track score within this level
+  const [currentLevelScore, setCurrentLevelScore] = useState(0);
 
   const steps = [
     {
       title: "Rotación de 90°",
       description: "Arrastra el triángulo para que coincida con el objetivo. Aplica una rotación de 90 grados en sentido horario",
       targetRotation: 90,
-      targetScale: 1,
+      targetScale: 1, // This will be applied to both scaleX and scaleY
       hint: "La matriz de rotación de 90° es [[0, -1], [1, 0]]. Esto transforma (x,y) en (-y,x)."
     },
     {
@@ -52,7 +52,8 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
       title: "Escalado No Uniforme",
       description: "Arrastra el triángulo para que coincida con el objetivo. Aplica escalado 2 en X y 1.5 en Y",
       targetRotation: 0,
-      targetScale: 1.5,
+      targetScaleX: 2, // New property for non-uniform scaling
+      targetScaleY: 1.5, // New property for non-uniform scaling
       hint: "La matriz de escalado no uniforme es [[2, 0], [0, 1.5]]. Diferente escala en cada dirección."
     },
     {
@@ -66,19 +67,35 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
       title: "Combinación Final",
       description: "Arrastra el triángulo para que coincida con el objetivo. Combina rotación y escalado",
       targetRotation: 45,
-      targetScale: 1.5,
+      targetScaleX: 1.5, // New property for non-uniform scaling
+      targetScaleY: 1.5, // New property for non-uniform scaling
       hint: "Combina rotación de 45° con escalado de 1.5. La matriz resultante es [[1.06, -1.06], [1.06, 1.06]]."
+    },
+    {
+      title: "Reflexión Eje X",
+      description: "Refleja el triángulo sobre el eje X",
+      targetRotation: 0,
+      targetScaleX: 1,
+      targetScaleY: -1, // Negate Y scale for X-axis reflection
+      hint: "La matriz de reflexión sobre el eje X es [[1, 0], [0, -1]]."
+    },
+    {
+      title: "Reflexión Eje Y",
+      description: "Refleja el triángulo sobre el eje Y",
+      targetRotation: 0,
+      targetScaleX: -1, // Negate X scale for Y-axis reflection
+      targetScaleY: 1,
+      hint: "La matriz de reflexión sobre el eje Y es [[-1, 0], [0, 1]]."
     }
   ];
 
   const currentStep = steps[step] || steps[0];
 
   useEffect(() => {
-    // Informar el número total de pasos
     onTotalStepsChange(steps.length);
     
     if (step >= steps.length) {
-      onLevelComplete(level.id, currentLevelScore); // Pass level.id and accumulated score when level completes
+      onLevelComplete(level.id, currentLevelScore);
       return;
     }
 
@@ -87,13 +104,14 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
       x: 400,
       y: 200,
       rotation: stepData.targetRotation || 0,
-      scale: stepData.targetScale || 1
+      scaleX: stepData.targetScaleX !== undefined ? stepData.targetScaleX : (stepData.targetScale || 1), // Use specific scaleX or general scale
+      scaleY: stepData.targetScaleY !== undefined ? stepData.targetScaleY : (stepData.targetScale || 1)  // Use specific scaleY or general scale
     });
-    setShape({ x: 200, y: 200, rotation: 0, scale: 1 });
+    setShape({ x: 200, y: 200, rotation: 0, scaleX: 1, scaleY: 1 }); // Reset with scaleX and scaleY
     setIsCorrect(false);
     setFeedback('');
     setShowHint(false);
-  }, [step, onTotalStepsChange]);
+  }, [step, onTotalStepsChange, level]);
 
   const checkAnswer = () => {
     const tolerance = 5;
@@ -103,28 +121,29 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
     const positionMatch = Math.abs(shape.x - target.x) < tolerance && 
                          Math.abs(shape.y - target.y) < tolerance;
     const rotationMatch = Math.abs(shape.rotation - target.rotation) < rotationTolerance;
-    const scaleMatch = Math.abs(shape.scale - target.scale) < scaleTolerance;
+    const scaleXMatch = Math.abs(shape.scaleX - target.scaleX) < scaleTolerance; // Check scaleX separately
+    const scaleYMatch = Math.abs(shape.scaleY - target.scaleY) < scaleTolerance; // Check scaleY separately
     
-    if (positionMatch && rotationMatch && scaleMatch) {
+    if (positionMatch && rotationMatch && scaleXMatch && scaleYMatch) { // Check all matches
       setIsCorrect(true);
       setFeedback('¡Perfecto! Has aplicado correctamente la transformación.');
       setTimeout(() => {
-        setCurrentLevelScore(prevScore => prevScore + 100); // Add points to local score
-        onStepComplete(100); // Signal step completion (for progress bar, GameContainer adds to currentLevelPoints)
+        setCurrentLevelScore(prevScore => prevScore + 100);
+        onStepComplete(100);
       }, 2000);
     } else {
       setIsCorrect(false);
       let feedbackText = 'Necesitas ajustar: ';
       if (!positionMatch) feedbackText += 'posición, ';
       if (!rotationMatch) feedbackText += 'rotación, ';
-      if (!scaleMatch) feedbackText += 'escala, ';
+      if (!scaleXMatch || !scaleYMatch) feedbackText += 'escala, '; // Group scale feedback
       feedbackText = feedbackText.slice(0, -2) + '.';
       setFeedback(feedbackText);
     }
   };
 
   const resetShape = () => {
-    setShape({ x: 200, y: 200, rotation: 0, scale: 1 });
+    setShape({ x: 200, y: 200, rotation: 0, scaleX: 1, scaleY: 1 }); // Reset with scaleX and scaleY
     setFeedback('Forma reiniciada a la posición original.');
   };
 
@@ -139,7 +158,8 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
   const applyScale = (factor) => {
     setShape({
       ...shape,
-      scale: shape.scale * factor
+      scaleX: shape.scaleX * factor, // Apply to scaleX
+      scaleY: shape.scaleY * factor  // Apply to scaleY
     });
     setFeedback(`Escalado aplicado: ${factor}x`);
   };
@@ -148,37 +168,33 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
     if (axis === 'x') {
       setShape({
         ...shape,
-        scale: shape.scale * -1
+        scaleY: shape.scaleY * -1 // Negate scaleY for X-axis reflection
       });
       setFeedback('Reflexión aplicada sobre eje X');
     } else if (axis === 'y') {
       setShape({
         ...shape,
-        scale: shape.scale * -1
+        scaleX: shape.scaleX * -1 // Negate scaleX for Y-axis reflection
       });
       setFeedback('Reflexión aplicada sobre eje Y');
     }
   };
 
-  // Calcular la matriz de transformación resultante
   const calculateTransformationMatrix = () => {
     const angle = (shape.rotation * Math.PI) / 180;
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
     
-    // Matriz de rotación
     const rotationMatrix = [
       [cos, -sin],
       [sin, cos]
     ];
     
-    // Matriz de escalado
     const scaleMatrix = [
-      [shape.scale, 0],
-      [0, shape.scale]
+      [shape.scaleX, 0], // Use scaleX
+      [0, shape.scaleY]  // Use scaleY
     ];
     
-    // Multiplicación de matrices (rotación * escalado)
     const result = [
       [
         rotationMatrix[0][0] * scaleMatrix[0][0] + rotationMatrix[0][1] * scaleMatrix[1][0],
@@ -193,14 +209,14 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
     return result;
   };
 
-  const drawTriangle = (x, y, rotation, scale) => {
+  const drawTriangle = (x, y, rotation, scaleX, scaleY) => { // Accept scaleX and scaleY
     return (
       <Group
         x={x}
         y={y}
         rotation={rotation}
-        scaleX={scale}
-        scaleY={scale}
+        scaleX={scaleX} // Use scaleX
+        scaleY={scaleY} // Use scaleY
         draggable
         onDragEnd={(e) => {
           setShape({
@@ -238,18 +254,15 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
 
   return (
     <div className="space-y-6">
-      {/* Header del ejercicio */}
       <div className="glass-card p-4">
         <h3 className="text-xl font-bold text-white mb-2">{currentStep.title}</h3>
         <p className="text-blue-200 text-sm">{currentStep.description}</p>
       </div>
 
-      {/* Área principal - Canvas grande */}
       <div className="glass-card p-6">
         <h4 className="text-xl font-semibold text-white mb-4">Área de Transformación</h4>
         <Stage width={800} height={600} className="mx-auto">
           <Layer>
-            {/* Grid */}
             {Array.from({ length: 16 }, (_, i) => (
               <Line
                 key={`v${i}`}
@@ -266,8 +279,6 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
                 strokeWidth={1}
               />
             ))}
-            
-            {/* Ejes coordenados */}
             <Line
               points={[0, 300, 800, 300]}
               stroke="rgba(255, 255, 255, 0.6)"
@@ -278,9 +289,7 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
               stroke="rgba(255, 255, 255, 0.6)"
               strokeWidth={2}
             />
-            
-            {/* Forma objetivo */}
-            <Group x={target.x} y={target.y} rotation={target.rotation} scaleX={target.scale} scaleY={target.scale}>
+            <Group x={Number(target.x)} y={Number(target.y)} rotation={Number(target.rotation)} scaleX={Number(target.scaleX)} scaleY={Number(target.scaleY)}>
               <Line
                 points={[-25, -35, 25, 35, 0, -35]}
                 stroke="rgba(34, 197, 94, 0.8)"
@@ -289,18 +298,14 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
                 fill="rgba(34, 197, 94, 0.3)"
               />
             </Group>
-            
-            {/* Forma arrastrable */}
-            {drawTriangle(shape.x, shape.y, shape.rotation, shape.scale)}
+            {drawTriangle(Number(shape.x), Number(shape.y), Number(shape.rotation), Number(shape.scaleX), Number(shape.scaleY))}
           </Layer>
         </Stage>
       </div>
 
-      {/* Controles */}
       <div className="glass-card p-6 ">
         <h4 className="text-lg font-semibold text-white mb-4">Controles de Transformación</h4>
         
-        {/* Rotaciones */}
         <div className="mb-6">
           <h5 className="text-md font-semibold text-blue-300 mb-3">Rotaciones</h5>
           <div className="flex gap-3 items-center justify-between flex-wrap items-end">
@@ -323,7 +328,6 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
           </div>
         </div>
 
-        {/* Escalados */}
         <div className="mb-6">
           <h5 className="text-md font-semibold text-green-300 mb-3">Escalados</h5>
           <div className="flex gap-10 items-center flex-wrap items-end">
@@ -342,7 +346,6 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
           </div>
         </div>
 
-        {/* Reflexiones */}
         <div className="mb-6">
           <h5 className="text-md font-semibold text-purple-300 mb-3">Reflexiones</h5>
           <div className="flex gap-3 items-center flex-wrap items-end">
@@ -357,7 +360,6 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
           </div>
         </div>
 
-        {/* Controles principales */}
         <div className="flex gap-4 mb-4 flex-wrap">
           <button
             onClick={checkAnswer}
@@ -415,7 +417,6 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
         )}
       </div>
 
-      {/* Matriz de Transformación Resultante */}
       <div className="glass-card p-6">
         <h4 className="text-lg font-semibold text-white mb-4">Matriz de Transformación Resultante</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -435,8 +436,12 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
                 <span className="text-white">{Math.round(shape.rotation)}°</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-green-200">Escala:</span>
-                <span className="text-white">{shape.scale.toFixed(2)}x</span>
+                <span className="text-green-200">Escala X:</span> {/* Display scaleX */} 
+                <span className="text-white">{shape.scaleX.toFixed(2)}x</span> {/* Display scaleX */} 
+              </div>
+              <div className="flex justify-between">
+                <span className="text-green-200">Escala Y:</span> {/* Display scaleY */} 
+                <span className="text-white">{shape.scaleY.toFixed(2)}x</span> {/* Display scaleY */} 
               </div>
               <div className="flex justify-between">
                 <span className="text-green-200">Posición:</span>
@@ -450,7 +455,6 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
         </div>
       </div>
 
-      {/* Información educativa */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="glass-card p-4">
           <h4 className="text-lg font-semibold text-blue-300 mb-3">Matrices de Rotación</h4>
@@ -481,11 +485,8 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
             <li>• <strong>Diagonal:</strong> [[0, 1], [1, 0]]</li>
           </ul>
         </div>
-        
-        
       </div>
 
-      {/* Explicación final sobre el triángulo */}
       <div className="glass-card p-6 mt-6">
         <h4 className="text-lg font-semibold text-white mb-3">¿Cómo se construye el triángulo?</h4>
         <p className="text-blue-200 text-base mb-2">

@@ -25,7 +25,6 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
-/* Scrollbar personalizada */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -44,7 +43,6 @@ body {
   background: rgba(255, 255, 255, 0.5);
 }
 
-/* Animaciones personalizadas */
 @keyframes pulse-glow {
   0%, 100% {
     box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
@@ -58,7 +56,6 @@ body {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
-/* Efectos de hover mejorados */
 .hover-lift {
   transition: transform 0.2s ease-in-out;
 }
@@ -67,7 +64,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* Gradientes personalizados */
 .gradient-text {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
@@ -75,7 +71,6 @@ body {
   background-clip: text;
 }
 
-/* Botones con efectos */
 .btn-primary {
   background-color: rgb(37 99 235);
   color: white;
@@ -130,7 +125,6 @@ body {
   transform: scale(0.95);
 }
 
-/* Botones deshabilitados */
 .btn-primary:disabled,
 .btn-secondary:disabled,
 .btn-success:disabled {
@@ -148,7 +142,6 @@ body {
   transform: scale(1);
 }
 
-/* Tarjetas con efectos de cristal */
 .glass-card {
   background-color: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(8px);
@@ -157,7 +150,6 @@ body {
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
 
-/* Inputs personalizados */
 .custom-input {
   background-color: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -177,7 +169,6 @@ body {
   color: rgb(156 163 175);
 }
 
-/* Matrices con estilo */
 .matrix-cell {
   background-color: rgba(255, 255, 255, 0.1);
   padding: 0.5rem;
@@ -192,7 +183,6 @@ body {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Indicadores de progreso */
 .progress-bar {
   width: 100%;
   background-color: rgba(255, 255, 255, 0.2);
@@ -208,7 +198,6 @@ body {
   transition: all 0.5s;
 }
 
-/* Efectos de partículas */
 .particle {
   position: absolute;
   width: 2px;
@@ -229,7 +218,6 @@ body {
   }
 }
 
-/* Responsive design mejorado */
 @media (max-width: 768px) {
   .glass-card {
     margin-left: 1rem;
@@ -244,7 +232,6 @@ body {
   }
 }
 
-/* Modo oscuro mejorado */
 @media (prefers-color-scheme: dark) {
   .glass-card {
     background-color: rgba(0, 0, 0, 0.2);

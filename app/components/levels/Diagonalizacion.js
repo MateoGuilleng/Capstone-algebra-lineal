@@ -8,7 +8,7 @@ export default function Diagonalizacion({ step, onStepComplete, onLevelComplete,
   const [isCorrect, setIsCorrect] = useState(false);
   const [userAnswer, setUserAnswer] = useState('');
   const [showHint, setShowHint] = useState(false);
-  const [currentLevelScore, setCurrentLevelScore] = useState(0); // New state to track score within this level
+  const [currentLevelScore, setCurrentLevelScore] = useState(0);
 
   const steps = [
     {
@@ -71,27 +71,17 @@ export default function Diagonalizacion({ step, onStepComplete, onLevelComplete,
   useEffect(() => {
     onTotalStepsChange(steps.length);
     if (step >= steps.length) {
-      onLevelComplete(level.id, currentLevelScore); // Pass level.id and accumulated score when level completes
+      onLevelComplete(level.id, currentLevelScore);
       return;
     }
     setFeedback('');
     setIsCorrect(false);
-    setUserAnswer(''); // Reset user answer
-    setShowHint(false); // Hide hint
-  }, [step, onTotalStepsChange, onLevelComplete]);
-
-  const handleConceptualComplete = () => {
-    setIsCorrect(true);
-    setFeedback('¡Concepto entendido! +50 puntos.');
-    setTimeout(() => {
-      setCurrentLevelScore(prevScore => prevScore + 50); // Add points to local score
-      onStepComplete(50);
-    }, 1500);
-  };
+    setUserAnswer('');
+    setShowHint(false);
+  }, [step, onTotalStepsChange, onLevelComplete, level, currentLevelScore]);
 
   const checkAnswer = () => {
     if (currentStep.eigenvalues) {
-      // Check for numerical eigenvalues
       const parsedAnswer = userAnswer.split(',').map(Number).sort((a,b) => a - b);
       const expectedEigenvalues = [...currentStep.eigenvalues].sort((a,b) => a - b);
 
@@ -100,7 +90,7 @@ export default function Diagonalizacion({ step, onStepComplete, onLevelComplete,
         setIsCorrect(true);
         setFeedback('¡Correcto! Has encontrado los valores propios.');
         setTimeout(() => {
-          setCurrentLevelScore(prevScore => prevScore + 100); // Add points to local score
+          setCurrentLevelScore(prevScore => prevScore + 100);
           onStepComplete(100);
         }, 1500);
       } else {
@@ -108,13 +98,12 @@ export default function Diagonalizacion({ step, onStepComplete, onLevelComplete,
         setFeedback('Incorrecto. Revisa tus valores propios.');
       }
     } else if (currentStep.solution && currentStep.solution.startsWith('CONCEPTUAL_LEVEL')) {
-      // Check for conceptual answers
       const expectedAnswer = currentStep.solution.split(': ')[1];
       if (userAnswer.toLowerCase().trim() === expectedAnswer.toLowerCase().trim()) {
         setIsCorrect(true);
         setFeedback('¡Concepto entendido! +50 puntos.');
         setTimeout(() => {
-          setCurrentLevelScore(prevScore => prevScore + 50); // Add points to local score
+          setCurrentLevelScore(prevScore => prevScore + 50);
           onStepComplete(50);
         }, 1500);
       } else {
@@ -122,7 +111,6 @@ export default function Diagonalizacion({ step, onStepComplete, onLevelComplete,
         setFeedback('Respuesta conceptual incorrecta. Revisa la pista y el ejemplo.');
       }
     } else {
-      // Fallback for conceptual steps without a defined 'solution' or 'eigenvalues'
       setIsCorrect(false);
       setFeedback('Respuesta no válida para este tipo de ejercicio.');
     }
@@ -130,16 +118,13 @@ export default function Diagonalizacion({ step, onStepComplete, onLevelComplete,
 
   const autoSolve = () => {
     if (currentStep.eigenvalues) {
-      // Auto-solve for numerical eigenvalues
       setUserAnswer(currentStep.eigenvalues.join(','));
       setFeedback('Respuesta automática: Valores propios calculados.');
     } else if (currentStep.solution && currentStep.solution.startsWith('CONCEPTUAL_LEVEL')) {
-      // Auto-solve for conceptual answers
       const conceptualAnswer = currentStep.solution.split(': ')[1];
       setUserAnswer(conceptualAnswer);
       setFeedback('Respuesta automática: Concepto rellenado.');
     } else {
-      // Fallback for conceptual steps without a defined 'solution' or 'eigenvalues'
       setFeedback('No se puede resolver automáticamente este ejercicio.');
     }
   };

@@ -9,7 +9,7 @@ export default function QuizGeneral({ step, onStepComplete, onLevelComplete, onT
   const [isCorrect, setIsCorrect] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
   const [quizScore, setQuizScore] = useState(0);
-  const [questionAnswered, setQuestionAnswered] = useState(false); // New state to track if current question has been answered
+  const [questionAnswered, setQuestionAnswered] = useState(false);
 
   const questions = [
     {
@@ -124,7 +124,7 @@ export default function QuizGeneral({ step, onStepComplete, onLevelComplete, onT
     }
   ];
 
-  const currentQuestion = questions[step]; // Use step prop as currentQuestionIndex
+  const currentQuestion = questions[step];
 
   useEffect(() => {
     onTotalStepsChange(questions.length);
@@ -132,11 +132,11 @@ export default function QuizGeneral({ step, onStepComplete, onLevelComplete, onT
     setIsCorrect(false);
     setUserSelection(null);
     setShowAnswer(false);
-    setQuestionAnswered(false); // Reset for new question
-  }, [step, onTotalStepsChange]); // Depend on step prop
+    setQuestionAnswered(false);
+  }, [step, onTotalStepsChange]);
 
   const handleOptionSelect = (index) => {
-    if (questionAnswered) return; // Prevent re-selection if already answered
+    if (questionAnswered) return;
     setUserSelection(index);
     setFeedback('');
     setIsCorrect(false);
@@ -150,46 +150,43 @@ export default function QuizGeneral({ step, onStepComplete, onLevelComplete, onT
       return;
     }
     
-    setQuestionAnswered(true); // Lock the question after checking
+    setQuestionAnswered(true);
 
     if (userSelection === currentQuestion.correctAnswerIndex) {
       setIsCorrect(true);
       setFeedback('¡Correcto! +10 puntos.');
       setQuizScore(prevScore => prevScore + 10);
-      onStepComplete(10); // Report points to GameContainer for current level points display
+      onStepComplete(10);
     } else {
       setIsCorrect(false);
       setFeedback('Incorrecto. La respuesta correcta es:');
-      setShowAnswer(true); // Show correct answer and explanation
+      setShowAnswer(true);
     }
   };
 
   const handleNextQuestion = () => {
     if (step < questions.length - 1) {
-      onStepComplete(0); // Increment step in parent (GameContainer)
+      onStepComplete(0);
     } else {
-      onLevelComplete(level.id, quizScore); // Pass total quizScore to parent
+      onLevelComplete(level.id, quizScore);
     }
   };
 
   const handleShowAnswer = () => {
     setShowAnswer(true);
-    setIsCorrect(false); // Mark as incorrect if auto-showing answer
+    setIsCorrect(false);
     setFeedback('La respuesta correcta es:');
-    setQuestionAnswered(true); // Lock the question after showing answer
-    // Do not add points if auto-showing answer
+    setQuestionAnswered(true);
   };
 
   return (
     <div className="space-y-6">
-      {/* Header del Quiz */}
       <div className="glass-card p-4">
         <h3 className="text-xl font-bold text-white mb-2">Quiz General de Álgebra Lineal</h3>
         <p className="text-blue-200 text-sm">Pon a prueba tus conocimientos en todos los temas.</p>
         
       </div>
 
-      {/* Área de la Pregunta */}
       <div className="glass-card p-6">
         <h4 className="text-lg font-semibold text-white mb-4">{currentQuestion.question}</h4>
         <div className="space-y-3">
@@ -207,12 +204,11 @@ export default function QuizGeneral({ step, onStepComplete, onLevelComplete, onT
         </div>
       </div>
 
-      {/* Controles */}
       <div className="glass-card p-6">
         <div className="flex gap-4 mb-4 flex-wrap">
           <button onClick={checkAnswer} className="btn-success" disabled={questionAnswered}>Verificar Respuesta</button>
           <button onClick={handleShowAnswer} className="btn-primary" disabled={questionAnswered}>Mostrar Respuesta</button>
-          {isCorrect || showAnswer || questionAnswered ? ( // Always show Siguiente Pregunta button once answered/shown
+          {isCorrect || showAnswer || questionAnswered ? (
             <button onClick={handleNextQuestion} className="btn-secondary">Siguiente Pregunta</button>
           ) : null}
         </div>
@@ -239,8 +235,6 @@ export default function QuizGeneral({ step, onStepComplete, onLevelComplete, onT
             <p className="text-yellow-200">{currentQuestion.explanation}</p>
           </motion.div>
         )}
-
-        
       </div>
     </div>
   );

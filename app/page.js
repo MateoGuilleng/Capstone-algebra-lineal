@@ -43,8 +43,8 @@ export default function Home() {
   ];
 
   const handleLevelComplete = (levelId, points) => {
-    setScore(prevScore => prevScore + points); // Accumulate score
-    setCurrentLevel(null); // Return to level selector
+    setScore(prevScore => prevScore + points);
+    setCurrentLevel(null);
   };
 
   return (
@@ -69,7 +69,7 @@ export default function Home() {
             level={currentLevel} 
             onComplete={handleLevelComplete}
             onBack={() => setCurrentLevel(null)}
-            currentGlobalScore={score} // Pass global score to GameContainer
+            currentGlobalScore={score}
           />
         ) : (
           <LevelSelector 

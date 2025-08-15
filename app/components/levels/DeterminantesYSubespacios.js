@@ -8,7 +8,7 @@ export default function DeterminantesYSubespacios({ step, onStepComplete, onLeve
   const [isCorrect, setIsCorrect] = useState(false);
   const [userAnswer, setUserAnswer] = useState('');
   const [showHint, setShowHint] = useState(false);
-  const [currentLevelScore, setCurrentLevelScore] = useState(0); // New state to track score within this level
+  const [currentLevelScore, setCurrentLevelScore] = useState(0);
 
   const steps = [
     {
@@ -58,22 +58,14 @@ export default function DeterminantesYSubespacios({ step, onStepComplete, onLeve
   useEffect(() => {
     onTotalStepsChange(steps.length);
     if (step >= steps.length) {
-      onLevelComplete(level.id, currentLevelScore); // Pass level.id and accumulated score when level completes
+      onLevelComplete(level.id, currentLevelScore);
       return;
     }
     setFeedback('');
     setIsCorrect(false);
-    setUserAnswer(''); // Reset user answer
-    setShowHint(false); // Hide hint
-  }, [step, onTotalStepsChange, onLevelComplete]);
-
-  const handleConceptualComplete = () => {
-    setIsCorrect(true);
-    setFeedback('¡Concepto entendido! +50 puntos.');
-    setTimeout(() => {
-      onStepComplete(50);
-    }, 1500);
-  };
+    setUserAnswer('');
+    setShowHint(false);
+  }, [step, onTotalStepsChange, onLevelComplete, level, currentLevelScore]);
 
   const checkAnswer = () => {
     if (currentStep.determinant !== undefined && currentStep.determinant !== 'CONCEPTUAL_LEVEL') {
@@ -81,7 +73,7 @@ export default function DeterminantesYSubespacios({ step, onStepComplete, onLeve
         setIsCorrect(true);
         setFeedback('¡Correcto! Has calculado el determinante.');
         setTimeout(() => {
-          setCurrentLevelScore(prevScore => prevScore + 100); // Add points to local score
+          setCurrentLevelScore(prevScore => prevScore + 100);
           onStepComplete(100);
         }, 1500);
       } else {
@@ -93,7 +85,7 @@ export default function DeterminantesYSubespacios({ step, onStepComplete, onLeve
         setIsCorrect(true);
         setFeedback('¡Correcto! Has calculado el rango.');
         setTimeout(() => {
-          setCurrentLevelScore(prevScore => prevScore + 100); // Add points to local score
+          setCurrentLevelScore(prevScore => prevScore + 100);
           onStepComplete(100);
         }, 1500);
       } else {
@@ -103,7 +95,6 @@ export default function DeterminantesYSubespacios({ step, onStepComplete, onLeve
     } else if (currentStep.solution && currentStep.solution.startsWith('CONCEPTUAL_LEVEL')) {
       const expectedAnswer = currentStep.solution.split(': ')[1];
       
-      // Simple parsing and validation for conceptual answers (dimension and simplified base)
       const expectedDimMatch = expectedAnswer.match(/dimension=(\d+)/);
       const expectedBaseMatch = expectedAnswer.match(/base=\[\[(.*)\]\]/);
       
@@ -120,8 +111,8 @@ export default function DeterminantesYSubespacios({ step, onStepComplete, onLeve
       }
 
       if (isConceptualCorrect && expectedBaseMatch && userBaseMatch) {
-        const expectedBaseStr = expectedBaseMatch[1].replace(/\s/g, ''); // Remove all whitespace
-        const userBaseStr = userBaseMatch[1].replace(/\s/g, ''); // Remove all whitespace
+        const expectedBaseStr = expectedBaseMatch[1].replace(/\s/g, '');
+        const userBaseStr = userBaseMatch[1].replace(/\s/g, '');
 
         if (expectedBaseStr === userBaseStr) {
           setFeedback(prev => prev + ' Base correcta.');
@@ -138,7 +129,7 @@ export default function DeterminantesYSubespacios({ step, onStepComplete, onLeve
         setIsCorrect(true);
         setFeedback(prev => (prev ? prev + ' ¡Concepto entendido! +50 puntos.' : '¡Concepto entendido! +50 puntos.'));
         setTimeout(() => {
-          setCurrentLevelScore(prevScore => prevScore + 50); // Add points to local score
+          setCurrentLevelScore(prevScore => prevScore + 50);
           onStepComplete(50);
         }, 1500);
       } else {
@@ -192,7 +183,7 @@ export default function DeterminantesYSubespacios({ step, onStepComplete, onLeve
         <div className="glass-card p-6">
           <h4 className="text-lg font-semibold text-white mb-4">Tu Respuesta</h4>
           <input
-            type="text" // Changed to text to allow conceptual answers
+            type="text"
             step="0.01"
             value={userAnswer}
             onChange={(e) => setUserAnswer(e.target.value)}
@@ -221,7 +212,11 @@ export default function DeterminantesYSubespacios({ step, onStepComplete, onLeve
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`rounded-lg p-4 mt-4 ${isCorrect ? 'bg-green-500 text-green-300' : 'bg-blue-500 text-blue-300'}`}
+              className={`rounded-lg p-4 mt-4 ${
+                isCorrect 
+                  ? 'bg-green-500 text-green-300' 
+                  : 'bg-blue-500 text-blue-300'
+              }`}
             >
               {feedback}
             </motion.div>

@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🧮 Álgebra Lineal Interactiva
 
-## Getting Started
+## Descripción del Proyecto
 
-First, run the development server:
+Este proyecto es una aplicación web interactiva diseñada para ayudar a estudiantes y entusiastas a aprender y practicar conceptos fundamentales de álgebra lineal de una manera dinámica y visual. La aplicación gamifica el proceso de aprendizaje, permitiendo a los usuarios resolver problemas de matrices, transformaciones lineales, determinantes, subespacios, diagonalización y quizzes generales, mientras rastrean su progreso y puntuación.
+
+## Características Principales
+
+-   **Niveles Interactivos:** Cinco niveles dedicados a diferentes temas del álgebra lineal:
+    -   **Transformaciones Básicas:** Rotación, escalado y traslación de figuras geométricas.
+    -   **Determinantes y Subespacios:** Cálculo de determinantes y exploración de espacios nulos y columnas.
+    -   **Sistemas de Ecuaciones:** Resolución de sistemas lineales mediante métodos matriciales.
+    -   **Diagonalización:** Conceptos de valores y vectores propios, y el proceso de diagonalización.
+    -   **Quiz General:** Un cuestionario de selección múltiple para evaluar el conocimiento global.
+-   **Visualización en Tiempo Real:** En el nivel de Transformaciones Básicas, los usuarios pueden arrastrar y transformar figuras y ver el resultado instantáneamente.
+-   **Entrada de Texto Universal:** Todas las preguntas, incluidas las conceptuales, aceptan entrada de texto para una mayor flexibilidad.
+-   **Feedback Inmediato:** Retroalimentación visual y textual sobre la corrección de las respuestas.
+-   **Sistema de Pistas:** Proporciona explicaciones generales y pistas específicas para cada ejercicio.
+-   **Auto-resolución:** Opción para ver la respuesta correcta automáticamente y comprender la solución.
+-   **Seguimiento de Puntuación:** Puntuación por nivel y una puntuación global acumulada.
+-   **Diseño Responsivo:** Interfaz de usuario adaptativa para una experiencia óptima en dispositivos móviles y de escritorio.
+
+## Cómo Iniciar el Proyecto
+
+Sigue estos pasos para configurar y ejecutar el proyecto localmente:
+
+### Prerrequisitos
+
+Asegúrate de tener Node.js (versión 18.x o superior) y npm (o yarn) instalados en tu máquina.
+
+### Instalación
+
+1.  **Clona el repositorio:**
+    ```bash
+    git clone https://github.com/MateoGuilleng/Capstone-algebra-lineal.git
+    cd Capstone-algebra-lineal
+    ```
+
+2.  **Instala las dependencias:**
+    ```bash
+    npm install
+    # o si usas yarn
+    # yarn install
+    ```
+
+### Ejecutar la Aplicación
+
+Para iniciar el servidor de desarrollo, ejecuta:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# o si usas yarn
+# yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La aplicación se ejecutará en `http://localhost:3000` (o el puerto que te indique la terminal).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Construir para Producción
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Para construir la aplicación para despliegue en producción:
 
-## Learn More
+```bash
+npm run build
+# o si usas yarn
+# yarn build
+```
 
-To learn more about Next.js, take a look at the following resources:
+Luego, puedes iniciar el servidor de producción con:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run start
+# o si usas yarn
+# yarn start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tecnologías Utilizadas
 
-## Deploy on Vercel
+-   **Next.js:** Framework de React para el desarrollo de aplicaciones web full-stack.
+-   **React:** Biblioteca de JavaScript para construir interfaces de usuario.
+-   **Tailwind CSS:** Framework de CSS utilitario para un diseño rápido y responsivo.
+-   **Framer Motion:** Biblioteca de animación para React.
+-   **React Konva:** Biblioteca de React para dibujar en el lienzo HTML5 con Konva.js (utilizado en Transformaciones Básicas).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Estructura del Proyecto
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+algebra/
+  - app/
+    - components/
+      - GameContainer.js
+      - levels/ # Contiene la lógica y UI para cada nivel
+        - BasicTransformations.js
+        - DeterminantesYSubespacios.js
+        - Diagonalizacion.js
+        - MatrixEquations.js
+        - QuizGeneral.js
+      - LevelSelector.js
+    - globals.css
+    - layout.js
+    - page.js
+  - public/ # Activos estáticos
+  - README.md
+  - package.json
+  - next.config.mjs
+  # ... otros archivos de configuración
+```
+
+## Contribución
+
+Las contribuciones son bienvenidas. Si deseas mejorar el proyecto, por favor sigue estos pasos:
+
+1.  Haz un fork del repositorio.
+2.  Crea una nueva rama (`git checkout -b feature/nueva-feature`).
+3.  Realiza tus cambios y commitea (`git commit -m 'feat: añadir nueva característica'`).
+4.  Empuja tus cambios a la rama (`git push origin feature/nueva-feature`).
+5.  Abre un Pull Request.
+
+## Licencia
+
+Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` para más detalles.

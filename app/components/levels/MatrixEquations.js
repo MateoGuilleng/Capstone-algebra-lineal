@@ -21,7 +21,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
   });
   const [propertiesCorrect, setPropertiesCorrect] = useState(false);
   const [propertiesChecked, setPropertiesChecked] = useState(false);
-  const [currentLevelScore, setCurrentLevelScore] = useState(0); // New state to track score within this level
+  const [currentLevelScore, setCurrentLevelScore] = useState(0);
 
   const steps = [
     {
@@ -149,11 +149,10 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
   const currentStep = steps[step] || steps[0];
 
   useEffect(() => {
-    // Informar el número total de pasos
     onTotalStepsChange(steps.length);
     
     if (step >= steps.length) {
-      onLevelComplete(level.id, currentLevelScore); // Pass level.id and accumulated score when level completes
+      onLevelComplete(level.id, currentLevelScore);
       return;
     }
 
@@ -175,25 +174,20 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
     setShowHint(false);
     setFeedback('');
     
-    // Calcular la solución real del sistema
     try {
       const realSolution = solveSystemWithData(stepData.coefficients, stepData.constants);
       setCalculatedSolution(realSolution);
     } catch (error) {
       setCalculatedSolution(null);
     }
-  }, [step, onTotalStepsChange]);
+  }, [step, onTotalStepsChange, level]);
 
   const solveSystemWithData = (coeffs, consts) => {
     const n = coeffs.length;
     
-    // Remove special handling for homogeneous systems - let Gaussian elimination handle it
-    
     const augmented = coeffs.map((row, i) => [...row, consts[i]]);
     
-    // Eliminación gaussiana
     for (let i = 0; i < n; i++) {
-      // Buscar el pivote máximo
       let maxRow = i;
       for (let k = i + 1; k < n; k++) {
         if (Math.abs(augmented[k][i]) > Math.abs(augmented[maxRow][i])) {
@@ -201,21 +195,16 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
         }
       }
       
-      // Intercambiar filas
       [augmented[i], augmented[maxRow]] = [augmented[maxRow], augmented[i]];
       
-      // Verificar si el pivote es cero (matriz singular)
       if (Math.abs(augmented[i][i]) < 1e-10) {
-        // Verificar si el sistema es inconsistente
         if (Math.abs(augmented[i][n]) > 1e-10) {
-          throw new Error('Sistema inconsistente'); // No solution
+          throw new Error('Sistema inconsistente');
         } else {
-          // Sistema con infinitas soluciones
-          return 'INFINITE_SOLUTIONS'; // Indicate infinite solutions
+          return 'INFINITE_SOLUTIONS';
         }
       }
       
-      // Hacer ceros debajo del pivote
       for (let k = i + 1; k < n; k++) {
         const factor = augmented[k][i] / augmented[i][i];
         for (let j = i; j <= n; j++) {
@@ -224,7 +213,6 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
       }
     }
     
-    // Sustitución hacia atrás
     const result = new Array(n).fill(0);
     for (let i = n - 1; i >= 0; i--) {
       let sum = 0;
@@ -242,13 +230,12 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
   };
 
   const checkAnswer = () => {
-    // Verificar si el usuario escribió "Sin solución" para sistemas inconsistentes
     if (userSolution.every(val => val.toLowerCase().includes('sin solución'))) {
       if (calculatedSolution === null) {
         setIsCorrect(true);
         setFeedback('¡Correcto! Este sistema no tiene solución porque las ecuaciones son contradictorias.');
         setTimeout(() => {
-          setCurrentLevelScore(prevScore => prevScore + 100); // Add points to local score
+          setCurrentLevelScore(prevScore => prevScore + 100);
           onStepComplete(100);
         }, 2000);
         return;
@@ -259,13 +246,12 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
       }
     }
 
-    // Verificar si el usuario escribió "Infinitas soluciones" para sistemas con infinitas soluciones
     if (userSolution.every(val => val.toLowerCase().includes('infinitas soluciones'))) {
       if (calculatedSolution === 'INFINITE_SOLUTIONS') {
         setIsCorrect(true);
         setFeedback('¡Correcto! Este sistema tiene infinitas soluciones.');
         setTimeout(() => {
-          setCurrentLevelScore(prevScore => prevScore + 100); // Add points to local score
+          setCurrentLevelScore(prevScore => prevScore + 100);
           onStepComplete(100);
         }, 2000);
         return;
@@ -277,11 +263,10 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
     }
     
     if (calculatedSolution === null) {
-      // Sistema sin solución
       setIsCorrect(true);
       setFeedback('¡Correcto! Este sistema no tiene solución porque las ecuaciones son contradictorias.');
       setTimeout(() => {
-        setCurrentLevelScore(prevScore => prevScore + 100); // Add points to local score
+        setCurrentLevelScore(prevScore => prevScore + 100);
         onStepComplete(100);
       }, 2000);
       return;
@@ -304,7 +289,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
       setIsCorrect(true);
       setFeedback('¡Perfecto! Todas las soluciones son correctas.');
       setTimeout(() => {
-        setCurrentLevelScore(prevScore => prevScore + 100); // Add points to local score
+        setCurrentLevelScore(prevScore => prevScore + 100);
         onStepComplete(100);
       }, 2000);
     } else {
@@ -336,7 +321,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
     if (allCorrect) {
       setPropertiesCorrect(true);
       setFeedback(`¡Excelente! Todas las propiedades están correctamente identificadas. +${correctCount * 10} puntos extra!`);
-      setCurrentLevelScore(prevScore => prevScore + 50); // Add points to local score
+      setCurrentLevelScore(prevScore => prevScore + 50);
     } else {
       setPropertiesCorrect(false);
       setFeedback(`${correctCount} de ${Object.keys(properties).length} propiedades son correctas. +${correctCount * 10} puntos extra.`);
@@ -354,7 +339,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
     setPropertiesChecked(true);
     setPropertiesCorrect(true);
     setFeedback('Propiedades resueltas automáticamente. +50 puntos extra por identificar todas correctamente.');
-    setCurrentLevelScore(prevScore => prevScore + 50); // Add points to local score
+    setCurrentLevelScore(prevScore => prevScore + 50);
   };
 
   const autoSolve = () => {
@@ -399,19 +384,16 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
 
   return (
     <div className="space-y-6">
-      {/* Header del ejercicio */}
       <div className="glass-card p-4">
         <h3 className="text-xl font-bold text-white mb-2">{currentStep.title}</h3>
         <p className="text-blue-200 text-sm">{currentStep.description}</p>
       </div>
 
-      {/* Área principal - Sistema de ecuaciones grande */}
       <div className="glass-card p-6">
         <h4 className="text-xl font-semibold text-white mb-4">Sistema de Ecuaciones</h4>
         {renderMatrix(coefficients, constants)}
       </div>
 
-      {/* Controles y solución */}
       <div className="glass-card p-6">
         <h4 className="text-lg font-semibold text-white mb-4">Solución</h4>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
@@ -490,7 +472,6 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
         )}
       </div>
 
-      {/* Propiedades de la matriz */}
       <div className="glass-card p-6">
         <div className="flex items-center justify-between mb-4">
           <h4 className="text-lg font-semibold text-white">Propiedades de la Matriz</h4>
@@ -602,7 +583,6 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
         )}
       </div>
 
-      {/* Información y métodos */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="glass-card p-4">
           <h4 className="text-lg font-semibold text-blue-300 mb-3">Eliminación Gaussiana</h4>

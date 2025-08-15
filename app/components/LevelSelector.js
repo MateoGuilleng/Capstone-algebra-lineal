@@ -47,7 +47,7 @@ export default function LevelSelector({ levels, onLevelSelect, score }) {
               {level.description}
             </p>
             
-            <div className="mt-4 flex items-center justify-end"> {/* Adjusted to justify-end */} 
+            <div className="mt-4 flex items-center justify-end">
               <div className="text-xs text-blue-300">
                 → Comenzar
               </div>
