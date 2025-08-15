@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-export default function MatrixEquations({ step, onStepComplete, onLevelComplete, onTotalStepsChange }) {
+export default function MatrixEquations({ step, onStepComplete, onLevelComplete, onTotalStepsChange, level }) {
   const [coefficients, setCoefficients] = useState([[2, 1], [1, 3]]);
   const [constants, setConstants] = useState([5, 6]);
   const [solution, setSolution] = useState([0, 0]);
@@ -21,6 +21,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
   });
   const [propertiesCorrect, setPropertiesCorrect] = useState(false);
   const [propertiesChecked, setPropertiesChecked] = useState(false);
+  const [currentLevelScore, setCurrentLevelScore] = useState(0); // New state to track score within this level
 
   const steps = [
     {
@@ -152,7 +153,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
     onTotalStepsChange(steps.length);
     
     if (step >= steps.length) {
-      onLevelComplete();
+      onLevelComplete(level.id, currentLevelScore); // Pass level.id and accumulated score when level completes
       return;
     }
 
@@ -247,6 +248,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
         setIsCorrect(true);
         setFeedback('¡Correcto! Este sistema no tiene solución porque las ecuaciones son contradictorias.');
         setTimeout(() => {
+          setCurrentLevelScore(prevScore => prevScore + 100); // Add points to local score
           onStepComplete(100);
         }, 2000);
         return;
@@ -263,6 +265,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
         setIsCorrect(true);
         setFeedback('¡Correcto! Este sistema tiene infinitas soluciones.');
         setTimeout(() => {
+          setCurrentLevelScore(prevScore => prevScore + 100); // Add points to local score
           onStepComplete(100);
         }, 2000);
         return;
@@ -278,6 +281,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
       setIsCorrect(true);
       setFeedback('¡Correcto! Este sistema no tiene solución porque las ecuaciones son contradictorias.');
       setTimeout(() => {
+        setCurrentLevelScore(prevScore => prevScore + 100); // Add points to local score
         onStepComplete(100);
       }, 2000);
       return;
@@ -300,6 +304,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
       setIsCorrect(true);
       setFeedback('¡Perfecto! Todas las soluciones son correctas.');
       setTimeout(() => {
+        setCurrentLevelScore(prevScore => prevScore + 100); // Add points to local score
         onStepComplete(100);
       }, 2000);
     } else {
@@ -331,6 +336,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
     if (allCorrect) {
       setPropertiesCorrect(true);
       setFeedback(`¡Excelente! Todas las propiedades están correctamente identificadas. +${correctCount * 10} puntos extra!`);
+      setCurrentLevelScore(prevScore => prevScore + 50); // Add points to local score
     } else {
       setPropertiesCorrect(false);
       setFeedback(`${correctCount} de ${Object.keys(properties).length} propiedades son correctas. +${correctCount * 10} puntos extra.`);
@@ -348,6 +354,7 @@ export default function MatrixEquations({ step, onStepComplete, onLevelComplete,
     setPropertiesChecked(true);
     setPropertiesCorrect(true);
     setFeedback('Propiedades resueltas automáticamente. +50 puntos extra por identificar todas correctamente.');
+    setCurrentLevelScore(prevScore => prevScore + 50); // Add points to local score
   };
 
   const autoSolve = () => {

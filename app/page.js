@@ -18,8 +18,8 @@ export default function Home() {
     },
     {
       id: 2,
-      title: "Transformaciones Compuestas",
-      description: "Combina múltiples transformaciones",
+      title: "Determinantes y Subespacios",
+      description: "Calcula determinantes y explora espacios nulos/columna",
       difficulty: "Intermedio"
     },
     {
@@ -30,15 +30,21 @@ export default function Home() {
     },
     {
       id: 4,
-      title: "Geometría Analítica",
-      description: "Aplica matrices en geometría",
+      title: "Diagonalización",
+      description: "Encuentra valores y vectores propios",
       difficulty: "Avanzado"
+    },
+    {
+      id: 5,
+      title: "Quiz General",
+      description: "Pon a prueba tus conocimientos de Álgebra Lineal",
+      difficulty: "Desafío"
     }
   ];
 
   const handleLevelComplete = (levelId, points) => {
-    setScore(score + points);
-    setCurrentLevel(null);
+    setScore(prevScore => prevScore + points); // Accumulate score
+    setCurrentLevel(null); // Return to level selector
   };
 
   return (
@@ -51,11 +57,11 @@ export default function Home() {
           <p className="text-xl text-blue-200 mb-4">
             Aprende matrices y transformaciones de forma divertida
           </p>
-          {score > 0 && (
+          {
             <div className="inline-block bg-yellow-500 text-black px-4 py-2 rounded-full font-bold">
               Puntuación: {score} puntos
             </div>
-          )}
+          }
         </header>
 
         {currentLevel ? (
@@ -63,6 +69,7 @@ export default function Home() {
             level={currentLevel} 
             onComplete={handleLevelComplete}
             onBack={() => setCurrentLevel(null)}
+            currentGlobalScore={score} // Pass global score to GameContainer
           />
         ) : (
           <LevelSelector 

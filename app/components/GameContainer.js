@@ -1,25 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import BasicTransformations from './levels/BasicTransformations';
-import CompositeTransformations from './levels/CompositeTransformations';
+import DeterminantesYSubespacios from './levels/DeterminantesYSubespacios';
 import MatrixEquations from './levels/MatrixEquations';
-import GeometricAlgebra from './levels/GeometricAlgebra';
+import Diagonalizacion from './levels/Diagonalizacion';
+import QuizGeneral from './levels/QuizGeneral';
 
-export default function GameContainer({ level, onComplete, onBack }) {
+export default function GameContainer({ level, onComplete, onBack, currentGlobalScore }) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [score, setScore] = useState(0);
+  const [currentLevelPoints, setCurrentLevelPoints] = useState(0); // Renamed local score to currentLevelPoints
   const [totalSteps, setTotalSteps] = useState(5); // Default
 
+  // Reset currentLevelPoints when level changes
+  useEffect(() => {
+    setCurrentLevelPoints(0);
+  }, [level]);
+
   const handleStepComplete = (points) => {
-    setScore(score + points);
+    setCurrentLevelPoints(prevPoints => prevPoints + points); // Use functional update to ensure latest state
     setCurrentStep(currentStep + 1);
   };
 
-  const handleLevelComplete = () => {
-    const totalPoints = score + (currentStep * 10);
-    onComplete(level.id, totalPoints);
+  const handleLevelComplete = (levelId, pointsFromLevel) => {
+    // Ensure we use the currentLevelPoints which has been accumulated over the level
+    // The 'pointsFromLevel' argument might be redundant or slightly out of sync if updates are pending.
+    onComplete(levelId, currentLevelPoints); // Pass the internally accumulated currentLevelPoints
   };
 
   const renderLevel = () => {
@@ -31,15 +38,17 @@ export default function GameContainer({ level, onComplete, onBack }) {
             onStepComplete={handleStepComplete}
             onLevelComplete={handleLevelComplete}
             onTotalStepsChange={setTotalSteps}
+            level={level} 
           />
         );
       case 2:
         return (
-          <CompositeTransformations 
+          <DeterminantesYSubespacios 
             step={currentStep}
             onStepComplete={handleStepComplete}
             onLevelComplete={handleLevelComplete}
             onTotalStepsChange={setTotalSteps}
+            level={level} 
           />
         );
       case 3:
@@ -49,11 +58,23 @@ export default function GameContainer({ level, onComplete, onBack }) {
             onStepComplete={handleStepComplete}
             onLevelComplete={handleLevelComplete}
             onTotalStepsChange={setTotalSteps}
+            level={level} 
           />
         );
       case 4:
         return (
-          <GeometricAlgebra 
+          <Diagonalizacion 
+            step={currentStep}
+            onStepComplete={handleStepComplete}
+            onLevelComplete={handleLevelComplete}
+            onTotalStepsChange={setTotalSteps}
+            level={level} 
+          />
+        );
+      case 5:
+        return (
+          <QuizGeneral 
+            level={level} // Pass the level prop to QuizGeneral
             step={currentStep}
             onStepComplete={handleStepComplete}
             onLevelComplete={handleLevelComplete}
@@ -82,7 +103,7 @@ export default function GameContainer({ level, onComplete, onBack }) {
           </button>
           <div className="text-right">
             <div className="text-sm text-blue-300">Puntuación actual</div>
-            <div className="text-2xl font-bold text-yellow-400">{score}</div>
+            <div className="text-2xl font-bold text-yellow-400">{currentLevelPoints}</div> {/* Display currentLevelPoints */} 
           </div>
         </div>
         

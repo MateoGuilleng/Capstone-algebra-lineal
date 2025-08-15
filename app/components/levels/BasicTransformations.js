@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Stage, Layer, Line, Circle, Group } from 'react-konva';
 
-export default function BasicTransformations({ step, onStepComplete, onLevelComplete, onTotalStepsChange }) {
+export default function BasicTransformations({ step, onStepComplete, onLevelComplete, onTotalStepsChange, level }) {
   const [shape, setShape] = useState({ x: 200, y: 200, rotation: 0, scale: 1 });
   const [target, setTarget] = useState({ x: 400, y: 200, rotation: 0, scale: 1 });
   const [isCorrect, setIsCorrect] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [showHint, setShowHint] = useState(false);
+  const [currentLevelScore, setCurrentLevelScore] = useState(0); // New state to track score within this level
 
   const steps = [
     {
@@ -77,7 +78,7 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
     onTotalStepsChange(steps.length);
     
     if (step >= steps.length) {
-      onLevelComplete();
+      onLevelComplete(level.id, currentLevelScore); // Pass level.id and accumulated score when level completes
       return;
     }
 
@@ -108,7 +109,8 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
       setIsCorrect(true);
       setFeedback('¡Perfecto! Has aplicado correctamente la transformación.');
       setTimeout(() => {
-        onStepComplete(100);
+        setCurrentLevelScore(prevScore => prevScore + 100); // Add points to local score
+        onStepComplete(100); // Signal step completion (for progress bar, GameContainer adds to currentLevelPoints)
       }, 2000);
     } else {
       setIsCorrect(false);

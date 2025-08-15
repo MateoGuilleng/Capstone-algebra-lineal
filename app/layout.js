@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
               <h1 className="text-2xl md:text-3xl font-bold gradient-text drop-shadow">Álgebra Lineal</h1>
               <nav className="hidden md:flex gap-6 text-blue-200 text-sm">
                 <a href="/" className="hover:text-white transition">Inicio</a>
-                <a href="https://github.com/" target="_blank" rel="noopener" className="hover:text-white transition">Repositorio</a>
+                <a href="https://github.com/MateoGuilleng/Capstone-algebra-lineal" target="_blank" rel="noopener" className="hover:text-white transition">Repositorio</a>
               </nav>
             </div>
           </header>

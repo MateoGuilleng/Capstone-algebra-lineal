@@ -24,9 +24,10 @@ export default function LevelSelector({ levels, onLevelSelect, score }) {
             <div className="flex items-center justify-between mb-4">
               <div className="text-4xl">
                 {level.id === 1 && '🔄'}
-                {level.id === 2 && '⚡'}
+                {level.id === 2 && '📊'}
                 {level.id === 3 && '🔢'}
-                {level.id === 4 && '📐'}
+                {level.id === 4 && '✨'}
+                {level.id === 5 && '🧠'}
               </div>
               <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                 level.difficulty === 'Fácil' ? 'bg-green-500 text-green-300' :
@@ -46,10 +47,7 @@ export default function LevelSelector({ levels, onLevelSelect, score }) {
               {level.description}
             </p>
             
-            <div className="mt-4 flex items-center justify-between">
-              <div className="text-xs text-gray-300">
-                Puntos máximos: {level.id * 100}
-              </div>
+            <div className="mt-4 flex items-center justify-end"> {/* Adjusted to justify-end */} 
               <div className="text-xs text-blue-300">
                 → Comenzar
               </div>
