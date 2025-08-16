@@ -17,7 +17,7 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
       title: "Rotación de 90°",
       description: "Arrastra el triángulo para que coincida con el objetivo. Aplica una rotación de 90 grados en sentido horario",
       targetRotation: 90,
-      targetScale: 1, // This will be applied to both scaleX and scaleY
+      targetScale: 1,
       hint: "La matriz de rotación de 90° es [[0, -1], [1, 0]]. Esto transforma (x,y) en (-y,x)."
     },
     {
@@ -47,45 +47,6 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
       targetRotation: 45,
       targetScale: 1,
       hint: "La matriz de rotación de 45° es [[0.707, -0.707], [0.707, 0.707]]. Usa cos(45°) y sin(45°)."
-    },
-    {
-      title: "Escalado No Uniforme",
-      description: "Arrastra el triángulo para que coincida con el objetivo. Aplica escalado 2 en X y 1.5 en Y",
-      targetRotation: 0,
-      targetScaleX: 2, // New property for non-uniform scaling
-      targetScaleY: 1.5, // New property for non-uniform scaling
-      hint: "La matriz de escalado no uniforme es [[2, 0], [0, 1.5]]. Diferente escala en cada dirección."
-    },
-    {
-      title: "Rotación de 270°",
-      description: "Arrastra el triángulo para que coincida con el objetivo. Aplica una rotación de 270 grados",
-      targetRotation: 270,
-      targetScale: 1,
-      hint: "La matriz de rotación de 270° es [[0, 1], [-1, 0]]. Esto transforma (x,y) en (y,-x)."
-    },
-    {
-      title: "Combinación Final",
-      description: "Arrastra el triángulo para que coincida con el objetivo. Combina rotación y escalado",
-      targetRotation: 45,
-      targetScaleX: 1.5, // New property for non-uniform scaling
-      targetScaleY: 1.5, // New property for non-uniform scaling
-      hint: "Combina rotación de 45° con escalado de 1.5. La matriz resultante es [[1.06, -1.06], [1.06, 1.06]]."
-    },
-    {
-      title: "Reflexión Eje X",
-      description: "Refleja el triángulo sobre el eje X",
-      targetRotation: 0,
-      targetScaleX: 1,
-      targetScaleY: -1, // Negate Y scale for X-axis reflection
-      hint: "La matriz de reflexión sobre el eje X es [[1, 0], [0, -1]]."
-    },
-    {
-      title: "Reflexión Eje Y",
-      description: "Refleja el triángulo sobre el eje Y",
-      targetRotation: 0,
-      targetScaleX: -1, // Negate X scale for Y-axis reflection
-      targetScaleY: 1,
-      hint: "La matriz de reflexión sobre el eje Y es [[-1, 0], [0, 1]]."
     }
   ];
 
