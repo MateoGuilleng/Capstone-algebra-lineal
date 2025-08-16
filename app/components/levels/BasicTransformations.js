@@ -427,7 +427,7 @@ export default function BasicTransformations({ step, onStepComplete, onLevelComp
           </ul>
         </div>
         
-        <div className="glass-card p-4">
+        <div className="glass-card p-4 ">
           <h4 className="text-lg font-semibold text-green-300 mb-3">Matrices de Escalado</h4>
           <ul className="text-green-200 text-sm space-y-2">
             <li>• <strong>Uniforme 2x:</strong> [[2, 0], [0, 2]]</li>
