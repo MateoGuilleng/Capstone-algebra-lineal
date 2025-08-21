@@ -32,7 +32,7 @@ export default function DeterminantesYSubespacios({ step, onStepComplete, onLeve
       description: "Encuentra la dimensión y una base para el espacio nulo de la matriz dada. (Formato: dimension=X, base=[v1,v2,...])",
       generalExplanation: "El espacio nulo (kernel) de una matriz A consiste en todos los vectores x para los cuales Ax = 0. Se encuentra resolviendo el sistema homogéneo Ax=0.",
       matrix: [[1, 1, 2], [2, 2, 4], [3, 3, 6]],
-      solution: 'CONCEPTUAL_LEVEL: dimension=1, base=[[-1,1,0]]',
+      solution: 'CONCEPTUAL_LEVEL: dimension=2, base=[[-1,1,0],[-2,0,1]]',
       hint: "Reduce la matriz a su forma escalonada por filas para identificar las variables libres y expresar el espacio nulo en términos de ellas."
     },
     {
