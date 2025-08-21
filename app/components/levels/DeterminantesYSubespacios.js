@@ -24,7 +24,7 @@ export default function DeterminantesYSubespacios({ step, onStepComplete, onLeve
       description: "Calcula el determinante de la matriz 3x3 dada. Usa la regla de Sarrus o cofactores.",
       generalExplanation: "Para el determinante de una matriz 3x3, puedes usar la regla de Sarrus (sumar productos de diagonales) o la expansión por cofactores.",
       matrix: [[1, 2, 1], [0, 1, 4], [5, 6, 0]],
-      determinant: -19,
+      determinant: 11,
       hint: "Aplica la regla de Sarrus: (1*1*0 + 2*4*5 + 1*0*6) - (5*1*1 + 6*4*1 + 0*2*0)."
     },
     {
